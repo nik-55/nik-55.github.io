@@ -1,3 +1,5 @@
+<p align="left"> <img src="https://komarev.com/ghpvc/?username=nik-55&label=Profile%20views&color=0e75b6&style=flat" alt="nik-55" /> </p>
+
 # Nikhil Mahajan
 
 > I enjoy coding & working on challenging projects. Love to collaborate with people and learn new things
