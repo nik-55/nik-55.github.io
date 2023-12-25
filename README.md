@@ -11,8 +11,7 @@ Hello there 👋, I am Nikhil from MP, India. I am passionate about the software
 - Working on the Election Portal - under @mdgspace. I am involved in both backend (django) and frontend (nextjs)
 - Looking for off campus intern opportunity
 - Relax and Chill as Winter vacations are going on
-- Working on this draft blog [Bits on the Move](https://medium.com/@nik.xyz.in/5e29e00b9c09)
-- Want to shot a podcast
+- Exploring ML - [snake-ai-game](https://github.com/nik-55/ai-snake-game) [ml-notes](https://github.com/nik-55/learning-ml)
 
 ## Social Links
 
@@ -23,6 +22,7 @@ Hello there 👋, I am Nikhil from MP, India. I am passionate about the software
 
 - [How does Node Js work behind the scene?](https://medium.com/@nik.xyz.in/node-js-architecture-5d2fc43357e4)
 - [Wikifunctions](https://medium.com/@nik.xyz.in/wikifunctions-f10e7da6d488)
+- [Bits on the Move](https://medium.com/@nik.xyz.in/️bits-on-the-move-5e29e00b9c09)
 
 ## Projects
 
