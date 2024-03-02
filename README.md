@@ -6,7 +6,8 @@ Hello there 👋, I am Nikhil from MP, India. I am passionate about the software
 
 ## Highlights
 
-- Working on the Election Portal - under @mdgspace. I am involved in both backend (django) and frontend (nextjs)
+- Working on IKS certificate portal backend
+- Working on Astrikos
 - Looking for off campus intern opportunity
 - Relax and Chill as Winter vacations are going on
 - Exploring ML - [snake-ai-game](https://github.com/nik-55/ai-snake-game) [ml-notes](https://github.com/nik-55/learning-ml)
