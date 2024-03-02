@@ -29,7 +29,7 @@ Hello there 👋, I am Nikhil from MP, India. I am passionate about the software
 
 > Team Projects build with proper planning - Verified by mentors
 
-- Election Portal - It is the portal for conducting elections within IIT Roorkee campus. Around 10K students visit our portal during last elections. The best part is that our prs are reviewed by seniors. Creating a product for real case scenario is a great experience. The repo is private but I can share the link of the [website](https://election.iitr.ac.in/). Skills: Next Typescript, Django, Docker, Git, Github, PostgreSQL
+- Election Portal - It is the portal for conducting elections within IIT Roorkee campus. Around 10K students visit our portal during last elections. The best part is that our prs are reviewed by seniors. Creating a product for real case scenario is a great experience. The repo is private but I can share the link of the [website](https://election.iitr.ac.in/). Skills: Next Typescript, Django, Docker, Git, Github, PostgreSQL. Completed 🎊 Around 6K+ voters cast their vote on the site without any technical issues
 
 ### Small scale projects
 
