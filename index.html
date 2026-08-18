@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nikhil Mahajan</title>
+<meta name="description" content="Software engineer in Bangalore, building AI systems and the infrastructure around them.">
+
+<meta property="og:url" content="https://nik-55.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nikhil Mahajan">
+<meta property="og:description" content="Software engineer in Bangalore, building AI systems and the infrastructure around them.">
+<meta property="og:image" content="https://nik-55.github.io/images/preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@m_nik55">
+<meta name="twitter:title" content="Nikhil Mahajan">
+<meta name="twitter:description" content="Software engineer in Bangalore, building AI systems and the infrastructure around them.">
+<meta name="twitter:image" content="https://nik-55.github.io/images/preview.png">
+
+<script>document.documentElement.className="js"</script>
+
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#FAFAF8;
+  --ink:#16161A;
+  --muted:#6C6C68;
+  --faint:#A5A49E;
+  --rule:#E2E0DA;
+  /* deep ink rather than a link blue. the paper is warm, so a
+     saturated screen blue sat on top of it and never in it   */
+  --accent:#1D3A6E;
+  --accent-rgb:29,58,110;
+  --wash:rgba(29,58,110,.045);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{margin:0;font-weight:600;font-size:inherit}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+img{display:block;max-width:100%}
+
+/* one spine ---------------------------------------------
+   a single centred column. name, tabs and content share
+   its left edge, and its width is the reading measure.
+   the padding is wide enough to hang the rules off it
+   without the text ever touching them.                    */
+.wrap{max-width:720px;margin:0 auto;padding:0 40px}
+.sec{padding:52px 0 80px}
+.sec .wrap{position:relative}
+.js .sec{min-height:52vh}
+.js .sec[hidden]{display:none}
+html:not(.js) .sec{border-top:1px solid var(--rule);padding:64px 0}
+
+/* the spine, drawn --------------------------------------
+   two hairlines hung off the column's padding, running the
+   full height behind everything. below 900px there is no
+   margin left to hang them in, so they go away.           */
+.rules{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  display:none;
+}
+.rules .wrap{height:100%;position:relative}
+.rules .wrap::before,.rules .wrap::after{
+  content:"";
+  position:absolute;
+  top:0;bottom:0;
+  width:1px;
+  background:var(--rule);
+}
+.rules .wrap::before{left:0}
+.rules .wrap::after{right:0}
+@media screen and (min-width:900px){.rules{display:block}}
+
+/* grain --------------------------------------------------
+   a flat off white reads as a screen. multiplied noise at
+   this weight is under the threshold you can name, and it
+   is the whole difference between screen and paper.       */
+.grain{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  pointer-events:none;
+  opacity:.06;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+
+/* the tab is the heading on screen. print needs a real one */
+.sec h2{
+  position:absolute;
+  width:1px;height:1px;
+  margin:-1px;padding:0;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+
+/* cover -------------------------------------------------- */
+.cover{padding:clamp(64px,11vh,104px) 0 44px}
+html:not(.js) .cover{padding-bottom:76px}
+/* the first screen is the one place to be loud. the name is
+   set past the point of comfort and pulled left by its own
+   sidebearing so the N sits on the rule, not near it       */
+.name{
+  font-family:var(--serif);
+  font-weight:400;
+  font-size:clamp(3.5rem,11.5vw,6.6rem);
+  line-height:.92;
+  letter-spacing:-.026em;
+  margin-left:-.035em;
+  margin-bottom:22px;
+}
+.tagline{
+  font-family:var(--serif);
+  font-style:italic;
+  font-size:clamp(1.2rem,2.6vw,1.6rem);
+  line-height:1.4;
+  color:var(--muted);
+  margin-bottom:12px;
+}
+.place{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:13px;
+  color:var(--faint);
+  margin-bottom:28px;
+}
+.place svg{flex:none;display:block}
+
+/* links --------------------------------------------------
+   marks only. the padding is the tap target, and the pull
+   left cancels the first one so the row still starts on
+   the column edge with everything else.                   */
+.links{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  margin-left:-6px;
+}
+.links a{
+  position:relative;
+  padding:6px;
+  color:var(--muted);
+  transition:color .15s;
+}
+.links a:hover,.links a:focus-visible{color:var(--accent)}
+.links svg{display:block;width:17px;height:17px;fill:currentColor}
+
+/* the label the mark is standing in for. hover and keyboard
+   focus both raise it, since a tooltip nobody can reach is
+   just a missing label                                     */
+.links a::after{
+  content:attr(data-label);
+  position:absolute;
+  bottom:calc(100% + 2px);
+  left:50%;
+  z-index:20;
+  padding:4px 8px;
+  background:var(--ink);
+  color:var(--bg);
+  font-size:11px;
+  line-height:1;
+  letter-spacing:.02em;
+  white-space:nowrap;
+  border-radius:3px;
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,3px);
+  transition:opacity .15s,transform .15s;
+}
+.links a:hover::after,.links a:focus-visible::after{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* tabs ---------------------------------------------------
+   the contents list, flattened into a bar. it sticks, so
+   there is always a way out of whatever you are reading.  */
+.tabbar{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--bg);
+  border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);
+}
+html:not(.js) .tabbar{display:none}
+.tabbar .wrap{display:flex;overflow-x:auto;scrollbar-width:none}
+.tabbar .wrap::-webkit-scrollbar{display:none}
+.tab{
+  flex:none;
+  margin-right:30px;
+  padding:14px 0;
+  position:relative;
+  font:inherit;
+  font-size:14px;
+  color:var(--muted);
+  background:none;
+  border:0;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:color .15s;
+}
+/* the marker is a 2px block sitting deliberately over the
+   bar's own rule. a 1px border on the same pixel row as
+   that rule rounds away at fractional zoom, so it flickers */
+.tab::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:-1px;
+  height:2px;
+  background:transparent;
+  transition:background-color .15s;
+}
+.tab:last-child{margin-right:0}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink)}
+.tab[aria-selected="true"]::after{background:var(--accent)}
+
+/* prose -------------------------------------------------- */
+.prose p + p{margin-top:18px}
+.prose a{
+  color:var(--accent);
+  border-bottom:1px solid rgba(var(--accent-rgb),.32);
+  transition:border-color .15s;
+}
+.prose a:hover{border-bottom-color:var(--accent)}
+
+/* entries ------------------------------------------------ */
+.entry{padding:24px 0}
+.entry:first-child{padding-top:0}
+.entry + .entry{border-top:1px solid var(--rule)}
+/* the date hangs off .top rather than .entry, so it lands on
+   the title's line whatever padding the entry carries */
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:18px;position:relative}
+.title{font-weight:600;letter-spacing:-.004em;transition:color .15s}
+.date{
+  font-size:12px;
+  color:var(--faint);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+  flex:none;
+}
+.meta{font-size:13px;color:var(--muted);margin-top:2px}
+.desc{color:var(--muted);margin-top:8px}
+.bullets{margin-top:10px;color:var(--muted)}
+.bullets li{position:relative;padding-left:17px}
+.bullets li + li{margin-top:6px}
+.bullets li::before{
+  content:"";
+  position:absolute;
+  left:0;top:.74em;
+  width:5px;height:1px;
+  background:var(--faint);
+}
+
+/* a link has to look like one before you touch it, so every
+   clickable title carries a standing arrow, not a hover one */
+.ext{
+  display:inline-block;
+  margin-left:7px;
+  font-size:11px;
+  line-height:1;
+  color:var(--faint);
+  transform:translateY(-2px);
+  transition:color .15s,transform .15s;
+}
+a.entry:hover .ext,.head-link:hover .ext{
+  color:var(--accent);
+  transform:translate(2px,-4px);
+}
+
+a.entry,a.head-link{display:block;position:relative;isolation:isolate}
+a.entry::before,a.head-link::before{
+  content:"";
+  position:absolute;
+  left:-20px;right:-20px;top:-6px;bottom:-6px;
+  z-index:-1;
+  transition:background-color .15s;
+}
+a.entry:hover::before,a.head-link:hover::before{background:var(--wash)}
+a.entry:hover .title,a.head-link:hover .title{color:var(--accent)}
+
+/* banner -------------------------------------------------
+   sits above the entries as a lead in, so it has to read as
+   framing rather than as a seventh project                 */
+.banner{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:26px;
+  padding:11px 14px;
+  background:var(--wash);
+  border-left:2px solid var(--accent);
+  font-size:13.5px;
+  color:var(--muted);
+  transition:color .15s,background-color .15s;
+}
+.banner:hover{color:var(--accent);background:rgba(var(--accent-rgb),.085)}
+.banner .ext{margin-left:0;transform:none}
+.banner:hover .ext{color:var(--accent);transform:translate(2px,-2px)}
+
+/* demos -------------------------------------------------- */
+.demo{
+  position:relative;
+  margin-top:16px;
+  border:1px solid var(--rule);
+  background:#ECEBE6;
+  aspect-ratio:16/9;
+  overflow:hidden;
+}
+.demo iframe{width:100%;height:100%;border:0;display:block}
+
+/* stack -------------------------------------------------- */
+.stack{display:grid;grid-template-columns:96px 1fr;column-gap:22px;row-gap:13px}
+.stack dt{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.11em;
+  color:var(--faint);
+  padding-top:4px;
+}
+.stack dd{margin:0;color:var(--muted)}
+
+/* entrance -----------------------------------------------
+   swapping a panel used to be instant, which reads as a
+   page redraw. staggered, the same content reads as having
+   arrived. it is 8px and half a second, nothing more.     */
+@keyframes rise{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:none}
+}
+.js .sec:not([hidden]) .body > *,
+.js .cover .name,
+.js .cover .tagline,
+.js .cover .place,
+.js .cover .links{
+  animation:rise .42s cubic-bezier(.22,.68,.28,1) backwards;
+}
+.js .sec:not([hidden]) .body > :nth-child(1){animation-delay:.05s}
+.js .sec:not([hidden]) .body > :nth-child(2){animation-delay:.09s}
+.js .sec:not([hidden]) .body > :nth-child(3){animation-delay:.13s}
+.js .sec:not([hidden]) .body > :nth-child(4){animation-delay:.17s}
+.js .sec:not([hidden]) .body > :nth-child(5){animation-delay:.21s}
+.js .sec:not([hidden]) .body > :nth-child(6){animation-delay:.25s}
+.js .sec:not([hidden]) .body > :nth-child(n+7){animation-delay:.29s}
+.js .cover .name{animation-duration:.62s;animation-delay:.04s}
+.js .cover .tagline{animation-delay:.15s}
+.js .cover .place{animation-delay:.21s}
+.js .cover .links{animation-delay:.27s}
+
+/* the gutter ---------------------------------------------
+   dates move outside the rules. the page
+   loses its tidy centred box and picks up a ragged edge,
+   which is the whole point. needs real margin to live in,
+   so it only starts once there is some.                   */
+@media screen and (min-width:1040px){
+  .date{
+    position:absolute;
+    left:-150px;top:.34em;
+    width:92px;
+    text-align:right;
+    white-space:normal;
+    line-height:1.5;
+  }
+}
+
+/* mobile ------------------------------------------------- */
+@media (max-width:760px){
+  .wrap{padding:0 22px}
+  .sec{padding:40px 0 56px}
+  html:not(.js) .sec{padding:48px 0}
+  .cover{padding:56px 0 34px}
+  html:not(.js) .cover{padding-bottom:48px}
+  .tabbar .wrap{padding-right:0}
+  .tab{margin-right:22px;padding:13px 0}
+  .top{flex-direction:column;gap:1px}
+  .date{order:-1}
+  .stack{grid-template-columns:1fr;row-gap:3px}
+  .stack dd{margin-bottom:11px}
+  a.entry::before{left:-14px;right:-14px}
+}
+
+/* the tabs are a screen affordance. on paper, show it all */
+@media print{
+  .tabbar,.grain,.rules{display:none}
+  .js .sec[hidden]{display:block}
+  .sec{border-top:1px solid var(--rule);padding:28px 0;min-height:0}
+  .sec h2{
+    position:static;
+    width:auto;height:auto;
+    margin:0 0 16px;
+    clip-path:none;
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:21px;
+    color:var(--muted);
+  }
+  .demo{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{
+    transition-duration:.01ms !important;
+    animation-duration:.01ms !important;
+    animation-delay:0s !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="rules" aria-hidden="true"><div class="wrap"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="cover">
+  <div class="wrap">
+    <div>
+        <h1 class="name">Nikhil<br>Mahajan</h1>
+        <p class="tagline">Building AI Systems</p>
+        <p class="place">
+          <svg width="12" height="15" viewBox="0 0 12 15" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+            <path d="M6 14s4.8-4.6 4.8-8A4.8 4.8 0 0 0 1.2 6c0 3.4 4.8 8 4.8 8Z"/>
+            <circle cx="6" cy="5.9" r="1.7"/>
+          </svg>
+          Bangalore, India
+        </p>
+        <nav class="links">
+          <a href="mailto:nikm5502@gmail.com" data-label="Email" aria-label="Email">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16a2 2 0 0 1 2 2v.35l-9.49 5.6a1 1 0 0 1-1.02 0L2 6.35V6a2 2 0 0 1 2-2Zm18 4.67V18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.67l9.49 5.6a1 1 0 0 0 1.02 0L22 8.67Z"/></svg>
+          </a>
+          <a href="Nikhil_Mahajan_CV.pdf" data-label="CV" aria-label="CV">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M5 3.5A1.5 1.5 0 0 1 6.5 2H14l5 5v13.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 20.5v-17ZM8 7h4v1.6H8V7Zm0 4h8v1.6H8V11Zm0 4h8v1.6H8V15Z"/></svg>
+          </a>
+          <a href="https://github.com/nik-55" target="_blank" rel="noopener" data-label="GitHub" aria-label="GitHub">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.31-.54-1.53.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.65.24 2.87.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.21.7.82.58A12.01 12.01 0 0 0 24 12.5C24 5.87 18.63.5 12 .5Z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/nikhilmahajan123/" target="_blank" rel="noopener" data-label="LinkedIn" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14Zm1.78 13.02H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z"/></svg>
+          </a>
+        </nav>
+      </div>
+    </div>
+</header>
+
+<nav class="tabbar" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" id="tab-about" aria-controls="about" aria-selected="true" aria-label="About">#</button>
+    <button class="tab" role="tab" id="tab-stack" aria-controls="stack" aria-selected="false" tabindex="-1">Stack</button>
+    <button class="tab" role="tab" id="tab-experience" aria-controls="experience" aria-selected="false" tabindex="-1">Experience</button>
+    <button class="tab" role="tab" id="tab-projects" aria-controls="projects" aria-selected="false" tabindex="-1">Projects</button>
+    <button class="tab" role="tab" id="tab-extracurricular" aria-controls="extracurricular" aria-selected="false" tabindex="-1">Extracurricular</button>
+    <button class="tab" role="tab" id="tab-writing" aria-controls="writing" aria-selected="false" tabindex="-1">Writing</button>
+    <button class="tab" role="tab" id="tab-education" aria-controls="education" aria-selected="false" tabindex="-1">Education</button>
+  </div>
+</nav>
+
+<section class="sec" id="about" role="tabpanel" aria-labelledby="tab-about">
+  <div class="wrap">
+    <h2>About</h2>
+    <div class="body prose">
+      <p>I am looking to join a strong team in a role related to AI. My preference is a fast moving, small team, somewhere between 1 and 100 people, building something people actually want, not an idea born out of thin air just for the sake of doing a startup. I can join immediately. You can reach me at <a href="mailto:nikm5502@gmail.com">nikm5502@gmail.com</a>.</p>
+      <p>I love tinkering and keep building things on the side, sometimes just to learn, sometimes to see how the technology is moving.</p>
+      <p>Frankly, if you spend time on my portfolio, you will see broad experience across the stack, and I know that costs depth in any one domain. I realize that too, and I want to go deep in one area.</p>
+      <p>I worked across the full stack for a long time, including production deployments on AWS and building pipelines in my previous roles. I also spent time on diffusion and fine tuning, including writing architectures in PyTorch. Since then I have switched gears to focus fully on building AI systems. This is not about the hype. It is fun to watch AI become an enabler and scale both horizontally and vertically across products, and my mix of full stack work with an architecture level understanding of AI turns out to be useful for building systems around it. That feels like my edge.</p>
+      <p>Right now I am building a few layers from scratch to strip away the abstractions these frameworks hide. Turns out simple patterns win.</p>
+      <p>I also have experience working in fast paced cultures, across engineering and product, leading small teams and building products end to end, from shaping the idea to writing the code to shipping and improving it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="stack" role="tabpanel" aria-labelledby="tab-stack">
+  <div class="wrap">
+    <h2>Stack</h2>
+    <div class="body">
+      <dl class="stack">
+        <dt>Languages</dt>
+        <dd>Python, TypeScript, C/C++</dd>
+        <dt>AI</dt>
+        <dd>Agents (LangChain, Phoenix), FAISS, PyTorch, RL (OpenEnv, GRPO), VAEs, Latent DiT</dd>
+        <dt>Backend</dt>
+        <dd>Django, FastAPI, PostgreSQL, MongoDB, Redis, Celery</dd>
+        <dt>DevOps</dt>
+        <dd>AWS (EC2, ECS, S3, Lambda, Load Balancer), Terraform, Docker, Linux</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="experience" role="tabpanel" aria-labelledby="tab-experience">
+  <div class="wrap">
+    <h2>Experience</h2>
+    <div class="body">
+
+      <div class="entry">
+        <div class="top"><h3 class="title">Astrikos.AI</h3><span class="date">Jul 2025 &ndash; Aug 2026</span></div>
+        <p class="meta">Software Engineer, Bangalore</p>
+        <ul class="bullets">
+          <li>Built an agentic layer over the datacenter analytics platform that helps operators make decisions and acts proactively.</li>
+          <li>Fine tuned open source LLMs for enterprise chatbots and served them across multi GPU setups using model partitioning.</li>
+          <li>Automated ingestion of high throughput sensor data from industrial historians and tuned TimescaleDB to cut query times.</li>
+          <li>Owned deployments on AWS and offline on premise.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="top"><h3 class="title">Astrikos.AI</h3><span class="date">Apr 2024 &ndash; Jun 2025</span></div>
+        <p class="meta">Software Engineer, Intern, Remote</p>
+        <ul class="bullets">
+          <li>Built a flow engine that runs Python code dynamically through a node based system.</li>
+          <li>Built a console for global datacenter operations driven by real time telemetry.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="top"><h3 class="title">Recepto.AI</h3><span class="date">Nov 2024 &ndash; Mar 2025</span></div>
+        <p class="meta">Software Engineer, Intern, Remote</p>
+        <ul class="bullets">
+          <li>Built the core lead pipeline: scraped LinkedIn at scale, classified posts to drop irrelevant ones early, matched the rest against each client, then enriched them with contact details.</li>
+          <li>Shipped full stack features alongside the founders through the product's early stage.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="top"><h3 class="title">Repello.AI</h3><span class="date">Mar 2024 &ndash; May 2024</span></div>
+        <p class="meta">Software Engineer, Intern, Remote</p>
+        <ul class="bullets">
+          <li>Worked on the attack engine of an automated LLM red teaming platform: prompt injection, jailbreaking, encoding based filter bypasses and system prompt extraction.</li>
+          <li>Built the platform UI including live log streaming and report generation, and manually red teamed emerging AI products.</li>
+        </ul>
+      </div>
+
+      <div class="entry">
+        <div class="top"><h3 class="title">Wikimedia Foundation</h3><span class="date">May 2023 &ndash; Aug 2023</span></div>
+        <p class="meta">Google Summer of Code, Remote</p>
+        <ul class="bullets">
+          <li>Wrote end to end tests for core Wikipedia user journeys and fixed bugs in the codebase.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="projects" role="tabpanel" aria-labelledby="tab-projects">
+  <div class="wrap">
+    <h2>Projects</h2>
+    <div class="body">
+
+      <a class="banner" href="https://gitshare.me/repo/043d0259-0f5a-446f-bc59-84c304461c54" target="_blank" rel="noopener">
+        <span>Code artifacts from multiple projects</span>
+        <span class="ext" aria-hidden="true">↗</span>
+      </a>
+
+      <a class="entry" href="https://gitlab.com/nik-55/llm-systems" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">LLM Systems, a SWE agent<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Jun 2026</span></div>
+        <p class="desc">A coding agent built with no framework: ReAct loop, custom tool layer, context compaction and a Docker runtime. Resolved 26 of a 30 instance SWE-bench Verified sample, with tracing and LLM as a judge evals to catch trajectory regressions.</p>
+      </a>
+
+      <a class="entry" href="https://app.codecrafters.io/users/nik-55" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Redis from scratch<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Dec 2025</span></div>
+        <p class="desc">A key value store written in C. Concurrent TCP server, RESP parsing, key expiry, and master replica synchronization.</p>
+      </a>
+
+      <a class="entry" href="https://www.reddit.com/r/StableDiffusion/comments/1ojhzgf/variational_autoencoder_vae_how_to_train_and/" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Variational autoencoder on Google QuickDraw<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Oct 2025</span></div>
+        <p class="desc">Trained a VAE from scratch to generate and interpolate hand drawn sketches, then wrote up how the training and inference actually work.</p>
+      </a>
+
+      <a class="entry" href="https://huggingface.co/nik-55/bhagavad-gita-gemma-3-1b-it/blob/main/training.ipynb" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Bhagavad Gita conversational AI<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Sep 2025</span></div>
+        <p class="desc">Built the dataset by scraping sites, running OCR on scanned books and transcribing YouTube audio, generated question answer pairs with the Gemini API, then fine tuned Gemma-3-1B-IT on rented GPUs.</p>
+      </a>
+
+      <a class="entry" href="https://www.linkedin.com/posts/nikhilmahajan123_hey-folks-im-excited-to-showcase-a-project-ugcPost-7364939018666504192-9JcE" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Shopmate<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Aug 2025</span></div>
+        <p class="desc">A LangGraph agent that asks clarifying questions first, then scrapes Amazon, Flipkart and Google Search to compare products and return the top three matches.</p>
+      </a>
+
+      <a class="entry" href="https://election.iitr.ac.in/" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Election Portal<span class="ext" aria-hidden="true">↗</span></h3><span class="date">2024</span></div>
+        <p class="desc">The official platform for campus elections at IIT Roorkee, where 10K+ students voted inside a two hour window. Tamper resistant voting, and the AWS infrastructure that held through the peak.</p>
+      </a>
+
+      <a class="entry" href="https://iks.mdgspace.org/onboard" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">IKS Console<span class="ext" aria-hidden="true">↗</span></h3><span class="date">2024</span></div>
+        <p class="desc">Built for the Indian Knowledge Systems division at the Ministry of Education. Upload a certificate template, point it at a spreadsheet, and it generates personalised certificates and emails them out, with SQS and Lambda doing the work in the background.</p>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="extracurricular" role="tabpanel" aria-labelledby="tab-extracurricular">
+  <div class="wrap">
+    <h2>Extracurricular</h2>
+    <div class="body">
+
+      <div class="entry">
+        <a href="https://github.com/nik-55/medchain-openenv-final-round" target="_blank" rel="noopener" class="head-link">
+          <div class="top"><h3 class="title">MedChain<span class="ext" aria-hidden="true">↗</span></h3><span class="date">May 2026</span></div>
+        <p class="meta">OpenEnv India 2026, by Hugging Face and Meta PyTorch. Finalist, top 100 of 2000+</p>
+        <p class="desc">An RL environment where an LLM agent coordinates hospital supply chains across wards and enterprise systems, scored by a deterministic reward formula with no LLM judge. Trained Qwen3.5-2B against the live simulation with GRPO.</p>
+        </a>
+        <div class="demo">
+            <iframe src="https://www.youtube.com/embed/L47ZVn1syAM" title="MedChain demo" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+      </div>
+
+      <div class="entry">
+        <a href="https://github.com/nik-55/runway-hackathon" target="_blank" rel="noopener" class="head-link">
+          <div class="top"><h3 class="title">ReelAgent<span class="ext" aria-hidden="true">↗</span></h3><span class="date">May 2026</span></div>
+        <p class="meta">Runway API Hackathon</p>
+        <p class="desc">Paste a YouTube link, get a finished vertical reaction reel. An agent reads the transcript, picks the sharpest moment, writes the commentary and calls the Runway APIs to generate every asset.</p>
+        </a>
+        <div class="demo">
+            <iframe src="https://www.youtube.com/embed/EMIqnpeBcDA" title="ReelAgent demo" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+      </div>
+
+      <div class="entry">
+        <a href="https://github.com/alpexlab/google-ai-hackathon" target="_blank" rel="noopener" class="head-link">
+          <div class="top"><h3 class="title">Google Gen AI Hackathon India<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Oct 2024</span></div>
+        <p class="meta">Top 5 in the healthcare track, in a team of three</p>
+        <p class="desc">A GenAI app that segments tumors from MRI scans and writes diagnostic reports with treatment plans.</p>
+        </a>
+        <div class="demo">
+            <iframe src="https://www.youtube.com/embed/1IOsEC0I_V8" title="Google Gen AI Hackathon demo" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+      </div>
+
+      <div class="entry">
+        <div class="top"><h3 class="title">MDG Space, IIT Roorkee</h3><span class="date">2022 &ndash; 2025</span></div>
+        <p class="meta">Project Manager</p>
+        <p class="desc">Led technical projects end to end, and ran workshops, lectures and mentoring for 100+ students across the club.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="writing" role="tabpanel" aria-labelledby="tab-writing">
+  <div class="wrap">
+    <h2>Writing</h2>
+    <div class="body">
+
+      <a class="entry" href="https://www.reddit.com/r/learnmachinelearning/comments/1ov591o/beginner_guide_to_train_on_multiple_gpus_using_ddp/" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Training on multiple GPUs with DDP<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Reddit</span></div>
+        <p class="desc">A runnable script walked through line by line to show what distributed training actually does: synchronization, seeding, and how the GPUs talk to each other.</p>
+      </a>
+
+      <a class="entry" href="https://www.reddit.com/r/LLM/comments/1oed8om/overview_of_wan_21_text_to_video_model/" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Inside Wan 2.1, a text to video model<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Reddit</span></div>
+        <p class="desc">A step by step breakdown of the inference pipeline, from the T5 encoder through the latent DiT to the VAE decoder.</p>
+      </a>
+
+      <a class="entry" href="https://medium.com/@nik.xyz.in/node-js-architecture-5d2fc43357e4" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">How Node.js works behind the scenes<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Medium</span></div>
+        <p class="desc">V8, libuv and the event loop, and why the event driven architecture is built the way it is.</p>
+      </a>
+
+      <a class="entry" href="https://medium.com/@nik.xyz.in/%EF%B8%8Fbits-on-the-move-5e29e00b9c09" target="_blank" rel="noopener">
+        <div class="top"><h3 class="title">Bits on the move<span class="ext" aria-hidden="true">↗</span></h3><span class="date">Medium</span></div>
+        <p class="desc">Every file is the same binary digits. What decides whether they are an image, audio or text is only how you agree to read them.</p>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="education" role="tabpanel" aria-labelledby="tab-education">
+  <div class="wrap">
+    <h2>Education</h2>
+    <div class="body">
+      <div class="entry">
+        <div class="top"><h3 class="title">Indian Institute of Technology Roorkee</h3><span class="date">Nov 2021 &ndash; Apr 2025</span></div>
+        <p class="meta">B.Tech in Chemical Engineering</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var bar = document.querySelector('.tabbar');
+  var tabs = [].slice.call(document.querySelectorAll('.tab'));
+  if(!bar || !tabs.length) return;
+
+  var panels = tabs.map(function(t){ return document.getElementById(t.getAttribute('aria-controls')); });
+
+  function show(id, focusTab, quiet){
+    var i = tabs.indexOf(document.getElementById('tab-' + id));
+    if(i < 0) return false;
+
+    tabs.forEach(function(t, n){
+      var on = n === i;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      /* hiding a panel does not stop its video, so reset the frame */
+      if(!on && !panels[n].hidden){
+        [].forEach.call(panels[n].querySelectorAll('iframe'), function(f){ f.src = f.src; });
+      }
+      panels[n].hidden = !on;
+    });
+
+    if(focusTab) tabs[i].focus();
+    /* only pull the page up if the bar has already scrolled off */
+    if(bar.getBoundingClientRect().top < 0) window.scrollTo(0, bar.offsetTop);
+    if(!quiet && history.replaceState) history.replaceState(null, '', '#' + id);
+    return true;
+  }
+
+  tabs.forEach(function(tab, i){
+    tab.addEventListener('click', function(){
+      show(tab.getAttribute('aria-controls'));
+    });
+    tab.addEventListener('keydown', function(e){
+      var to = null;
+      if(e.key === 'ArrowRight') to = (i + 1) % tabs.length;
+      else if(e.key === 'ArrowLeft') to = (i - 1 + tabs.length) % tabs.length;
+      else if(e.key === 'Home') to = 0;
+      else if(e.key === 'End') to = tabs.length - 1;
+      if(to === null) return;
+      e.preventDefault();
+      show(tabs[to].getAttribute('aria-controls'), true);
+    });
+  });
+
+  /* deep links (#projects) still land on the right tab */
+  function fromHash(){ return show(location.hash.replace('#','')); }
+  window.addEventListener('hashchange', fromHash);
+  if(!fromHash()) show('about', false, true);
+})();
+</script>
+
+</body>
+</html>
