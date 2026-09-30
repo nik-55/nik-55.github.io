@@ -1,0 +1,10 @@
+theme: minima
+layouts_dir: blogs/_layouts
+
+titles_from_headings:
+  strip_title: true
+
+exclude:
+  - blogs/Dockerfile
+  - README.md
+  - blogs/*/assets/*.html

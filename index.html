@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Nikhil Mahajan</title>
-<meta name="description" content="Software engineer in Bangalore, building AI systems and the infrastructure around them.">
+<meta name="description" content="Software engineer building AI agents and the backend systems around them.">
 
 <meta property="og:url" content="https://nik-55.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Nikhil Mahajan">
-<meta property="og:description" content="Software engineer in Bangalore, building AI systems and the infrastructure around them.">
-<meta property="og:image" content="https://nik-55.github.io/images/preview.png">
+<meta property="og:description" content="Software engineer building AI agents and the backend systems around them.">
+<meta property="og:image" content="https://nik-55.github.io/assets/preview.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@m_nik55">
 <meta name="twitter:title" content="Nikhil Mahajan">
-<meta name="twitter:description" content="Software engineer in Bangalore, building AI systems and the infrastructure around them.">
-<meta name="twitter:image" content="https://nik-55.github.io/images/preview.png">
+<meta name="twitter:description" content="Software engineer building AI agents and the backend systems around them.">
+<meta name="twitter:image" content="https://nik-55.github.io/assets/preview.png">
 
 <link rel="icon" href="favicon.ico" type="image/x-icon">
 
@@ -40,7 +40,6 @@ a:hover{color:#CC3300}
   border-bottom:3px solid #1F3A68;
 }
 
-/* title bar */
 .title{
   display:flex;
   justify-content:space-between;
@@ -55,7 +54,6 @@ a:hover{color:#CC3300}
 .title p{margin:3px 0 0;color:#C9D6EC;font-size:12px}
 .title .place{margin:0;color:#C9D6EC;font-size:11px;white-space:nowrap}
 
-/* contact strip */
 .contact{
   padding:5px 16px;
   background:#E4E9F0;
@@ -65,8 +63,6 @@ a:hover{color:#CC3300}
 .contact a{color:#1F3A68;font-weight:bold;text-decoration:none}
 .contact a:hover{color:#CC3300;text-decoration:underline}
 
-/* nav column + content */
-/* short sections (Stack, Education) keep the same frame as long ones */
 .cols{display:flex;align-items:stretch;min-height:460px}
 .nav{
   flex:none;
@@ -87,8 +83,6 @@ a:hover{color:#CC3300}
 
 .main{flex:1;min-width:0;padding:16px 20px 24px}
 
-/* one section at a time, picked by the URL hash. with no hash, About.
-   the large scroll margin keeps the browser from jumping down to it */
 .sec{display:none;scroll-margin-top:100vh}
 .sec:target,body:not(:has(.sec:target)) #about{display:block}
 
@@ -181,7 +175,7 @@ iframe{
 
 <div class="contact">
   <a href="mailto:nikm5502@gmail.com">Email</a> |
-  <a href="Nikhil_Mahajan_CV.pdf">CV</a> |
+  <a href="assets/Nikhil_Mahajan_CV.pdf">CV</a> |
   <a href="https://github.com/nik-55">GitHub</a> |
   <a href="https://www.linkedin.com/in/nikhilmahajan123/">LinkedIn</a>
 </div>
@@ -202,12 +196,10 @@ iframe{
 
 <section class="sec" id="about">
   <h2>About</h2>
-  <p>I am looking to join a strong team in a role related to AI. My preference is a fast moving, small team, somewhere between 1 and 100 people, building something people actually want, not an idea born out of thin air just for the sake of doing a startup. I can join immediately. You can reach me at <a href="mailto:nikm5502@gmail.com">nikm5502@gmail.com</a>.</p>
+  <p>I am looking to join a strong team as a software engineer. My preference is a fast moving, small team, somewhere between 1 and 100 people, building something people actually want. I can join immediately. You can reach me at <a href="mailto:nikm5502@gmail.com">nikm5502@gmail.com</a>.</p>
   <p>I love tinkering and keep building things on the side, sometimes just to learn, sometimes to see how the technology is moving.</p>
-  <p>Frankly, if you spend time on my portfolio, you will see broad experience across the stack, and I know that costs depth in any one domain. I realize that too, and I want to go deep in one area.</p>
-  <p>I worked across the full stack for a long time, including production deployments on AWS and building pipelines in my previous roles. I also spent time on diffusion and fine tuning, including writing architectures in PyTorch. Since then I have switched gears to focus fully on building AI systems. This is not about the hype. It is fun to watch AI become an enabler and scale both horizontally and vertically across products, and my mix of full stack work with an architecture level understanding of AI turns out to be useful for building systems around it. That feels like my edge.</p>
-  <p>Right now I am building a few layers from scratch to strip away the abstractions these frameworks hide. Turns out simple patterns win.</p>
-  <p>I also have experience working in fast paced cultures, across engineering and product, leading small teams and building products end to end, from shaping the idea to writing the code to shipping and improving it.</p>
+  <p>In my previous roles I worked across the full stack, including production deployments on AWS and building pipelines. I also spent time on diffusion and fine tuning, including writing architectures in PyTorch. Since then I have focused on building AI systems.</p>
+  <p>Right now I am building <a href="https://github.com/nik-55/mini-pi">Mini-pi</a>, a coding agent from scratch, to strip away the abstractions these frameworks hide. Turns out simple patterns win.</p>
 </section>
 
 <section class="sec" id="stack">
@@ -278,8 +270,8 @@ iframe{
   <div class="entry">
     <div class="head"><a href="https://github.com/nik-55/mini-pi"><b>Mini-pi</b></a><span class="date">Sep 2026 &ndash; now</span></div>
     <div class="meta">Ongoing, on PyPI as mini-pi-agent</div>
-    <p>A coding agent I am writing from scratch with no agent framework. It has sandboxed tools, sessions you can resume and rewind, context compaction, extensions, and a terminal UI.</p>
-    <p>It grew out of my <a href="https://gitlab.com/nik-55/llm-systems">LLM Systems</a> experiments, where I built a first SWE agent and ran it on SWE-bench Verified, with tracing and LLM as a judge evals on its trajectories.</p>
+    <p>A coding agent built from scratch, with sandboxed tools, session persistence and branching, context compaction, hooks and extensions.</p>
+    <p>It grew out of my <a href="https://github.com/nik-55/tinkering-with-llms">tinkering with harnesses</a> on SWE-bench Verified, with OpenTelemetry tracing and LLM as a judge trajectory evals.</p>
   </div>
 
   <div class="entry">
@@ -383,7 +375,6 @@ iframe{
 </div>
 
 <script>
-/* a hidden iframe keeps playing, so reload the videos on every section switch */
 window.addEventListener('hashchange', function(){
   [].forEach.call(document.querySelectorAll('iframe'), function(f){ f.src = f.src; });
 });
