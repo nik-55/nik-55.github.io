@@ -3,13 +3,17 @@
 Source code: [nik-55/mini-pi](https://github.com/nik-55/mini-pi)<br>
 PyPI: [mini-pi-agent](https://pypi.org/project/mini-pi-agent/)
 
-I have been building my own coding agent from scratch recently, and I want to write about it. The design is heavily inspired by [pi](https://github.com/earendil-works/pi). Since my agent is a lightweight version of it, I called it minipi. I wrote it in Python for readability, but the blog stays language agnostic: everything is explained with pseudo-code. I assume you have used a coding agent like Claude Code or Codex.
+<iframe src="https://www.youtube.com/embed/14buip8OnWM" title="Building a coding agent from scratch" style="display:block;width:100%;aspect-ratio:16/9;border:0" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+*I asked an LLM to make a video after writing this blog post. It explains the concepts neatly.*
+
+I have been building my own coding agent from scratch recently, and I want to write about it. The design is heavily inspired by [pi](https://github.com/earendil-works/pi). Since my agent is a lightweight version of it, I called it `minipi`. I wrote it in Python for readability, but the blog stays language agnostic. In this post, I will walk through the concepts I learned while building it.
 
 ![minipi demo](assets/demo.gif)
 
-## The Smallest Agent
+## An Agent with no batteries
 
-A coding agent is an LLM calling tools in a loop. This is the ReAct pattern (reason + act + observe). The model reasons over the conversation, and if it calls a tool, we run the tool and send the result back. It observes the result, and this repeats until it replies without calling any tool.
+An agent is an LLM calling tools in a loop. This is the ReAct pattern (reason + act + observe). The model reasons over the conversation, and if it calls a tool, we run the tool and send the result back. It observes the result, and this repeats until it replies without calling any tool.
 
 ```python
 agent(prompt, tools):
@@ -44,7 +48,7 @@ The rest of the blog fixes these one by one.
 
 ## Talking to the Model
 
-There are a lot of inference providers, and each provider supports many models. The API surface varies by both provider and model, so we should not couple our code to any specific provider. For this, we can use the ports and adapters pattern. We define a standard interface (the port, e.g. `AssistantMessage`) that the rest of our application uses. The adapter then does two things: it transforms objects from the port into provider-specific objects, and when the provider responds, it transforms the response back to the port. The following is our port:
+There are a lot of inference providers, and each provider supports many models. The API surface varies by both provider and model, so we should not couple our code to any specific provider. For this, *we can use the ports and adapters pattern*. We define a standard interface (the port, e.g. `AssistantMessage`) that the rest of our application uses. The adapter then does two things: *it transforms objects from the port into provider-specific objects, and when the provider responds, it transforms the response back to the port*. The following is our port:
 
 ```python
 UserMessage:
@@ -74,7 +78,7 @@ ToolResultMessage:
     is_error: bool = False
 ```
 
-When a request to the provider fails with a retryable error (like a timeout or a rate limit), I retry it. The retry respects headers like `retry-after` if the provider sends them.
+When a request to the provider fails with a retryable error (like a timeout or a rate limit), it retries after a delay. The retry respects headers like `retry-after` if the provider sends them.
 
 ### Parsing the Stream
 
@@ -111,9 +115,9 @@ assistant_message = parser.finalize()
 
 Multiple checkpoints occur in the ReAct loop (e.g. tool execution started, tool execution completed, LLM is thinking), and we want to inform the end consumer about those states as they happen. How would you build it?
 
-> By consumer, I mean a surface for interacting with the coding agent, for example the Claude Code CLI or the VS Code extension. There can be multiple types of consumers, like a TUI, a normal REPL, JSON-RPC, or even an API server.
+> *By consumer, I mean a surface for interacting with the coding agent, for example the Claude Code CLI or the VS Code extension. There can be multiple types of consumers, like a TUI, a normal REPL, JSON-RPC, or even an API server.*
 
-So we don't want to tie the loop's code to any one consumer. Instead, we can use pub-sub: the loop publishes events at different checkpoints, and any interested consumer can subscribe to them. When an event arrives, the consumer parses it and acts accordingly.
+So we don't want to tie the loop's code to any one consumer. Instead, we can use *pub-sub: the loop publishes events at different checkpoints, and any interested consumer can subscribe to them*. When an event arrives, the consumer parses it and acts accordingly.
 
 Suppose the user sends the prompt "Read file foo.py and explain it". Here are the events:
 
@@ -138,11 +142,13 @@ agent_start                  agent loop begins
 agent_end                    no queued messages, agent loop ends
 ```
 
-The following pseudo-code describes the full loop, including these events. The loop takes the user prompt and the message history so far as input. Project context is loaded in the order you would expect: the system prompt, then `AGENTS.md`, then the skills. The user can also send a message while the agent is working to steer it in a particular direction. Steering messages are appended to a queue, and the loop adds them to the history at the start of the next turn.
+The following pseudo-code describes the full loop, including these events. The loop takes the user prompt and the message history so far as input. The user can also send a message while the agent is working to steer it in a particular direction. Steering messages are appended to a queue, and the loop adds them to the history at the start of the next turn.
 
 ```python
 # Before each return, the loop still yields the _end events for what it started
 # (e.g. turn_end, agent_end). They are skipped below for simplicity.
+
+# final_system_prompt = system_prompt + AGENTS.md + frontmatter(.agents/skills/*/SKILL.md)
 
 agent_loop(prompt, history, tools):
     yield agent_start
@@ -188,21 +194,22 @@ Providers expect the message history to have valid pairs: if the assistant calls
 
 ### Blocking vs Async
 
-Our agent is single-threaded, so there is one gotcha we need to handle carefully. Suppose the user sends the message "hi", and the request goes to the LLM. The request is an I/O call, so with a blocking implementation, the agent pauses until the LLM response completes. What is the consequence? While the LLM is responding, the agent is busy waiting for and streaming the response, and it does not read any new requests from the user. So a request to abort, or even a steering message, is not handled until the response ends. That is why we need an asynchronous implementation, where the event loop is never blocked and can receive new requests as they come. (Don't confuse async with multithreading or multiprocessing.)
+Our agent is single-threaded, so there is one gotcha we need to handle carefully. Suppose the user sends the message "hi", and the request goes to the LLM. The request is an I/O call, so with a blocking implementation, the agent pauses until the LLM response completes. What is the consequence? While the LLM is responding, the agent is busy waiting for and streaming the response, and it does not read any new requests from the user. So a request to abort, or even a steering message, is not handled until the response ends. That is why we need an asynchronous implementation, where the event loop is not blocked and can receive new requests as they come. (Don't confuse async with multithreading or multiprocessing.)
 
 ## Tools
 
-What tools does a coding agent need at minimum? Check out [mini-swe-agent](https://github.com/swe-agent/mini-swe-agent): it gives the agent only one tool, `bash`, and that works. However, we can use different AI models, and not all of them are good at editing files through bash; indentation and escaping errors are common. So we add three more tools: `read`, `write` and `edit`. Separate tools also help if we later want a planning mode, where the agent can only read files (and maybe grep) to explore.
+What tools does a coding agent need at minimum? Check out [mini-swe-agent](https://github.com/swe-agent/mini-swe-agent): it gives the agent only one tool, `bash`, and that works. However, we can use different AI models, and not all of them are good at editing files through `bash`; indentation and escaping errors are common. Also, reverting file changes on rewind is possible for edits made with the file tools. For changes made through commands, it can be tricky to know which files to revert. So we add three more tools: `read`, `write` and `edit`. Separate tools also help if we later want a planning mode, where the agent can only read files (and maybe grep) to explore.
 
 - `read(path, offset?, limit?)`: It reads up to `limit` lines starting at line `offset` (1-indexed), and truncates the output (`output[:max 50KB]`). 50 KB is approximately 14K tokens.
 - `write(path, content)`: It creates the file if it doesn't exist, and overwrites it if it does.
 - `edit(path, old_string, new_string)`: It replaces `old_string` with `new_string` only if `old_string` occurs exactly once in the file.
-- `bash(command, timeout?)`: It runs the command, with a default timeout of 60 seconds.
-  - Both stdout and stderr go to the same pipe, so we get the log in roughly the order it was written.
-  - Since logs contain the critical details at the end, we keep the tail rather than the head (`output[-max 50KB:]`).
-  - How do we implement bash? We start bash as a subprocess. But then, how does the cancellation signal kill it? We are in an event loop, so we can't sit in a while loop waiting for either the cancellation or the process to finish; that would block the event loop.
-  - Instead, we race two concurrent tasks: one waits for the cancellation signal, and the other reads the process's output pipe. If the cancellation task finishes first, we kill the process.
-  - One more gotcha: the command can start more processes of its own, and killing bash does not kill them. So we start bash in its own process group (every process it starts joins the same group) and kill the entire group instead.
+
+### Bash
+
+- `bash(command, timeout?)`: It runs the command, with a default timeout of 60 seconds. Both `stdout` and `stderr` go to the same pipe, so we get the log in roughly the order it was written. Since logs contain the critical details at the end, we keep the tail rather than the head (`output[-max 50KB:]`).
+- How do we implement bash? We start bash as a subprocess. But then, how does the cancellation signal kill it? We are in an event loop, so we can't sit in a while loop waiting for either the cancellation or the process to finish; that would block the event loop.
+- Instead, we race two concurrent tasks: one waits for the cancellation signal, and the other reads the process's output pipe. If the cancellation task finishes first, we kill the process.
+- One more gotcha: the command can start more processes of its own, and killing bash does not kill them. So we start bash in its own process group (every process it starts joins the same group) and kill the entire group instead.
 
 ```python
 bash(command, timeout = 60):
@@ -222,9 +229,11 @@ bash(command, timeout = 60):
     else: return error("command timed out after <timeout> seconds")
 ```
 
-We also need a sandbox. The `read`, `write` and `edit` tools accept only file paths inside the current working directory and reject anything outside it. For bash, I use bubblewrap, which relies on Linux namespaces to limit what the command can do. For example, if the sandbox mounts a directory as read-only, the kernel itself rejects any write to that directory, so a command can't get around it.
+### Sandbox
 
-If bubblewrap is not installed, the agent falls back to `ask` mode, where the user is prompted every time before a command runs.
+We also need a sandbox. The `read`, `write` and `edit` tools accept only file paths inside the current working directory and reject anything outside it. For bash, I use bubblewrap, which relies on Linux namespaces to limit what the command can do. For example, if the sandbox mounts a directory as read-only, the kernel itself rejects any write to that directory, so a command can't get around it. If bubblewrap is not installed, the agent falls back to `ask` mode, where the user is prompted every time before a command runs.
+
+### Operations
 
 All the tools above interact with the filesystem and the shell: they read and write files and run commands. Let's call these operations. If the tools call the local operations directly, they can only run on the machine where the coding agent is installed. But sometimes you want to run the coding agent locally while its operations run on a remote server over SSH. So instead, we define an interface with the operations each tool needs.
 
@@ -266,7 +275,9 @@ The session file is created only after the first successful assistant message; c
 
 ### Traversal
 
-Each entry in the JSONL file stores the id of its parent in `parent_id`. To read a session, we take the last entry, move to its parent via `parent_id`, and keep going until `parent_id` is `None`. This walk gives the entries from newest to oldest; reversing it gives them in order, which we turn into messages. This design also makes branching easy. We keep a pointer in memory, `leaf_id`, to the last entry of the current branch. To rewind, we move `leaf_id` to the entry we want to go back to. When the next message arrives, we append it with `leaf_id` as its parent, so a single flat file holds multiple branches. It is a similar idea to how git stores commits.
+Each entry in the JSONL file stores the id of its parent in `parent_id`. To read a session, we take the last entry, move to its parent via `parent_id`, and keep going until `parent_id` is `None`. This walk gives the entries from newest to oldest, reversing it gives them in order, which we turn into messages.
+
+This design also makes branching easy. We keep a pointer in memory, `leaf_id`, to the last entry of the current branch. To rewind, we move `leaf_id` to the entry we want to go back to. When the next message arrives, we append it with `leaf_id` as its parent, so a single flat file holds multiple branches. It is a similar idea to how git stores commits.
 
 ```text
 line  id   parent_id  entry
@@ -301,7 +312,9 @@ When compacting, we want to keep the recent turns so the agent knows what it is 
 
 ![Compaction of the message history](assets/compaction.gif)
 
-There are different ways to generate the summary. What I implemented is a separate request to the LLM: the system prompt explains how to write the summary, the message history is sent as one string, and the LLM writes the summary. The downside is a cache miss, since the entire history goes out as a new request. My guess is that Claude Code and Codex do it differently: they add the compaction prompt to the same conversation, so the cached history is reused. They run thousands of compactions at any moment, and if each one were a cache miss over such long conversations, it would be hard to scale.
+There are different ways to generate the summary. What I implemented is a separate request to the LLM: the system prompt explains how to write the summary, the message history is sent as one string, and the LLM writes the summary. The downside is a cache miss, since the entire history goes out as a new request.
+
+My guess is that Claude Code and Codex do it differently: they add the compaction prompt to the same conversation, so the cached history is reused. They run thousands of compactions at any moment, and if each one were a cache miss over such long conversations, it would be hard to scale.
 
 The compaction prompt also needs tuning. A bad summary makes the agent forget what it did, what it was doing, and which approaches it already tried. The agent then explores the same things again until the context fills up and compacts again, and it can end up in a loop.
 
@@ -321,9 +334,9 @@ Extensions can also hook into the loop at specific points, look at the state, an
 
 ## TUI
 
-Which surface should the user get (TUI, web, or an editor extension)? I prefer a TUI, and for simplicity, one surface is enough. Tokens stream fast, so we need a library that re-renders quickly without flickering. I tried some Python libraries but did not find them reliable enough. Pi ships its own TUI as a separate package, [@earendil-works/pi-tui](https://github.com/earendil-works/pi/tree/main/packages/tui). It is like React for the terminal: you build the UI from components, it redraws only the lines that changed (differential rendering), and it even renders markdown. But my code is in Python, and pi-tui is in TypeScript. How will they communicate?
+Which surface should the user get (TUI, web, or an editor extension)? I prefer a TUI, and for simplicity, one surface is enough. Tokens stream fast, so we need a library that re-renders quickly without flickering. I tried some Python libraries but did not find them reliable enough. Pi ships its own TUI as a separate package, [`@earendil-works/pi-tui`](https://github.com/earendil-works/pi/tree/main/packages/tui). It is like React for the terminal: you build the UI from components, it redraws only the lines that changed (differential rendering), and it even renders markdown. But my code is in Python, and pi-tui is in TypeScript. How will they communicate?
 
-VS Code has the same problem. It is written in TypeScript, so how can it show lint errors in Python? It uses the Language Server Protocol (LSP): VS Code spawns the language server as a separate process, and the two talk over stdin/stdout (much like MCP), using JSON-RPC messages.
+VS Code is written in TypeScript, so how can it show lint errors in Python? It uses the Language Server Protocol (LSP): VS Code spawns the language server as a separate process, and the two talk over stdin/stdout (much like MCP), using JSON-RPC messages.
 
 We can do the same, with a protocol similar to JSON-RPC. The TUI spawns Python as a subprocess, and on the Python side we implement an RPC server that reads requests from the TUI on stdin and writes responses to stdout. Think of it as a backend and a frontend with a two-way channel between them.
 
@@ -357,7 +370,7 @@ Why not a web server? Because any other local process can connect to it, and the
 
 </details>
 
-Each request is a JSON line on stdin with a request id. The backend parses it, takes the action, and writes the response to stdout with the same id, which is how the TUI matches a response to its request (`req_1` above). The other lines are events.
+Each request is a JSON line on stdin with a request id. The backend parses it, takes the action, and writes the response to stdout with the same id, which is how the TUI matches a response to its request (`req_1` above).
 
 ![One prompt between the TUI, Python and the provider](assets/rpc-sequence.png)
 
@@ -396,44 +409,25 @@ Looking back, one more thing I took from pi is separation of concerns. Everythin
 
 ![The layers of minipi](assets/layers.png)
 
-## What We Built
+## Putting it together
 
-Here is what we built:
+Using the pieces above, you can build your own coding agent without any agentic framework :) For implementation details, checkout `minipi` repo.
 
-```text
-▄███████▄
-█ • ◡ • █
-  █   █  
-  █   █▄ 
-```
-{: .logo}
+### What we skipped?
 
-- Streaming responses
-- Steering and follow-up messages while the agent is working
-- Project context from `AGENTS.md` and `.agents/skills`
-- Four tools (`read`, `write`, `edit`, `bash`) with a minimal sandbox
-- Sessions saved to `~/.mini-pi`
-- Auto compaction of older messages, or manual with `/compact <custom instructions>`
-- Extensions that add tools, AI vendors and commands
-- Hooks at points in the agent lifecycle (input, before a tool call, after a tool call)
-- Slash commands like `/rewind`, `/resume` and `/permission`
-- A basic TUI
-
-## What We Skip
-
-The only built-in API is OpenAI Chat Completions, and I have tested it only on [fireworks.ai](https://fireworks.ai/models) with a few models; more vendors can be added through extensions. I have also tested minipi only on Ubuntu. It should work on other OSes, but the sandbox needs Linux.
-
-There are tons of other things we skip:
 - Providers: more built-in vendor APIs, more ways to auth, thinking levels
-- Agent: system prompt, more hooks, built-in MCP, memory, parallel and background tool execution
+- Agent: system prompt, more hooks, built-in MCP, memory, parallel and background tool execution, better sandboxing.
 - Sessions: `/fork`, session export
 - TUI: auto completion, a better way to configure providers and settings, current context usage, cost
-- Tests and evals
+- Tests, evaluations and benchmark against other harnesses.
+- Tons of more things...
 
-## Setup
+### Conclusion
 
-- System requirements: Python, uv and Node.js (Node.js runs the TUI).
-- Run `uv tool install mini-pi-agent`.
-- `cd` to the workspace you want to work in and run `minipi`.
-- Run `/login fireworks fw_UIO...`. The API key is stored as plain text in `~/.mini-pi/auth.json`.
-- Run `/help` to see the other commands.
+Hope you enjoyed reading it. It did get a bit lengthy though.
+
+Also, here is weird logo ;) for cover image
+
+![minipi logo](assets/cover.png)
+
+Happy Hacking!
